@@ -11,6 +11,7 @@
  *    gcc -g -Wall -fopenmp -o omp_gauss_col omp_gauss_col.c 
  * Usage:
  *    ./omp_gauss_col <thread_count> <matrix/array dimensions>
+ *    Eg: ./omp_gauss_col 8 10
  * Runtime schedule types:
  *    export OMP_SCHEDULE="static,1"
  *    export OMP_SCHEDULE="dynamic,1"
