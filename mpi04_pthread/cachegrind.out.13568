@@ -1,0 +1,548 @@
+desc: I1 cache:         32768 B, 64 B, 8-way associative
+desc: D1 cache:         32768 B, 64 B, 8-way associative
+desc: LL cache:         20971520 B, 64 B, 20-way associative
+cmd: ./pthread_pi_estimation_increment 8 10000
+events: Ir I1mr ILmr Dr D1mr DLmr Dw D1mw DLmw 
+fl=/tmp/valgrind-3.12.0/coregrind/m_trampoline.S
+fn=vgPlain_amd64_linux_REDIR_FOR_vgettimeofday
+176 339998 1 1 0 0 0 0 0 0
+177 339998 0 0 0 0 0 0 0 0
+178 339998 0 0 339998 0 0 0 0 0
+fl=/upb/departments/pc2/users/m/minhvo/mpi04_pthread/pthread_pi_estimation_increment.c
+fn=do_Tossing_Serial
+192 4 1 1 0 0 0 2 0 0
+198 2 0 0 1 0 0 1 0 0
+200 1 0 0 0 0 0 1 0 0
+201 50006 1 1 30002 0 0 1 0 0
+202 50000 1 1 10000 0 0 30000 0 0
+203 50000 0 0 10000 0 0 30000 0 0
+205 70000 0 0 40000 0 0 10000 0 0
+206 30000 0 0 20000 0 0 0 0 0
+207 7875 0 0 7875 0 0 0 0 0
+211 4 0 0 2 0 0 1 0 0
+212 5 0 0 2 0 0 1 0 0
+214 1 0 0 0 0 0 0 0 0
+215 2 0 0 2 0 0 0 0 0
+fn=do_Tossing_Update_at_End
+166 144 0 0 0 0 0 72 8 0
+172 72 0 0 36 0 0 36 0 0
+174 36 1 1 0 0 0 36 0 0
+175 400171 2 2 240045 0 0 36 0 0
+176 399955 0 0 79991 0 0 239973 0 0
+177 399955 0 0 79991 0 0 239973 0 0
+179 559937 0 0 319964 0 0 79991 0 0
+180 239973 0 0 159982 0 0 0 0 0
+181 62877 0 0 62877 2 0 0 0 0
+184 72 0 0 0 0 0 36 0 0
+185 144 0 0 72 0 0 36 0 0
+186 180 0 0 72 0 0 36 0 0
+187 72 1 0 0 0 0 36 0 0
+189 36 0 0 0 0 0 0 0 0
+190 72 0 0 72 0 0 0 0 0
+fn=do_Tossing_Update_each_step
+138 144 2 2 0 0 0 72 15 7
+144 72 0 0 36 0 0 36 0 0
+146 36 0 0 0 0 0 36 0 0
+147 400171 1 1 240045 0 0 36 0 0
+148 399955 0 0 79991 0 0 239973 0 0
+149 399955 1 1 79991 0 0 239973 0 0
+151 559937 0 0 319964 0 0 79991 0 0
+152 239973 1 1 159982 0 0 0 0 0
+153 62781 0 0 62781 0 0 0 0 0
+156 159982 0 0 0 0 0 79991 0 0
+157 239973 0 0 159982 0 0 0 0 0
+158 188343 0 0 62781 0 0 62781 0 0
+160 239973 0 0 79991 0 0 79991 0 0
+161 159982 0 0 0 0 0 79991 0 0
+163 36 0 0 0 0 0 0 0 0
+164 72 0 0 72 0 0 0 0 0
+fn=main
+34 5 0 0 0 0 0 3 0 0
+48 2 0 0 1 0 0 0 0 0
+49 8 1 1 2 0 0 2 0 0
+50 2 0 0 1 0 0 0 0 0
+53 5 1 1 1 0 0 1 0 0
+55 8 0 0 2 0 0 2 0 0
+56 2 0 0 1 0 0 0 0 0
+59 6 1 1 1 0 0 1 0 0
+65 6 1 1 1 0 0 2 1 0
+66 3 0 0 0 0 0 1 0 0
+68 6 1 1 1 1 0 2 0 0
+69 6 0 0 1 0 0 2 0 0
+71 12 1 1 3 2 1 2 0 0
+72 1 0 0 0 0 0 1 0 0
+73 1 0 0 0 0 0 1 0 0
+74 3 0 0 1 0 0 1 0 0
+75 6 1 1 2 0 0 1 0 0
+76 12 1 1 3 0 0 2 0 0
+77 3 0 0 2 0 0 1 0 0
+78 2 0 0 0 0 0 1 0 0
+79 2 0 0 0 0 0 1 0 0
+80 6 1 1 2 0 0 2 0 0
+81 6 0 0 2 0 0 2 0 0
+84 46 2 2 26 0 0 1 0 0
+85 96 1 1 24 0 0 16 0 0
+86 8 0 0 0 0 0 8 0 0
+87 8 0 0 0 0 0 8 0 0
+88 32 0 0 16 0 0 8 0 0
+90 184 1 1 124 0 0 8 0 0
+91 324 0 0 108 0 0 36 0 0
+93 184 1 1 124 1 0 8 0 0
+94 288 0 0 108 0 0 36 0 0
+95 48 1 1 16 0 0 8 0 0
+96 96 0 0 24 4 0 16 0 0
+97 64 0 0 32 0 0 8 1 0
+100 3 1 1 0 0 0 1 0 0
+101 2 0 0 0 0 0 1 0 0
+102 46 1 1 26 0 0 1 0 0
+103 104 0 0 40 0 0 16 0 0
+106 46 1 1 26 0 0 1 0 0
+109 96 1 1 24 0 0 16 0 0
+110 8 1 1 0 0 0 8 0 0
+111 8 0 0 0 0 0 8 0 0
+112 32 0 0 16 0 0 8 8 0
+114 184 1 1 124 0 0 8 0 0
+115 324 0 0 108 10 0 36 0 0
+117 184 1 1 124 2 0 8 0 0
+118 288 0 0 108 0 0 36 0 0
+120 48 0 0 16 0 0 8 0 0
+121 96 1 1 24 4 0 16 0 0
+123 64 0 0 32 0 0 8 0 0
+126 3 1 1 0 0 0 1 0 0
+127 2 0 0 0 0 0 1 0 0
+128 46 0 0 26 0 0 1 0 0
+129 104 0 0 40 0 0 16 0 0
+133 2 0 0 0 0 0 1 0 0
+134 3 0 0 1 0 0 1 0 0
+135 1 0 0 0 0 0 0 0 0
+136 2 0 0 2 0 0 0 0 0
+fn=rand01
+218 1019892 2 1 0 0 0 339964 0 0
+221 1359856 0 0 0 0 0 339964 12 7
+222 2039784 0 0 679928 0 0 339964 0 0
+223 2039784 0 0 679928 0 0 679928 0 0
+224 1359856 0 0 1019892 2 0 339964 0 0
+fl=???
+fn=(below main)
+0 62 5 4 17 2 0 17 0 0
+fn=???
+0 1183928 73 51 1183280 28 0 218 1 1
+fn=_Exit
+0 8 1 1 1 0 0 0 0 0
+fn=_IO_cleanup
+0 103 7 7 32 1 1 17 0 0
+fn=_IO_default_setbuf
+0 38 3 3 8 0 0 14 0 0
+fn=_IO_default_xsputn
+0 5913 4 4 1947 0 0 471 0 0
+fn=_IO_do_write@@GLIBC_2.2.5
+0 2319 5 5 677 3 0 532 1 0
+fn=_IO_doallocbuf
+0 18 1 1 8 1 0 4 0 0
+fn=_IO_file_doallocate
+0 53 4 4 11 3 0 6 1 0
+fn=_IO_file_overflow@@GLIBC_2.2.5
+0 19823 9 7 5403 0 0 2995 2 0
+fn=_IO_file_setbuf@@GLIBC_2.2.5
+0 15 2 2 3 0 0 8 0 0
+fn=_IO_file_stat
+0 4 1 1 1 0 0 0 0 0
+fn=_IO_file_sync@@GLIBC_2.2.5
+0 13 2 2 6 0 0 2 0 0
+fn=_IO_file_write@@GLIBC_2.2.5
+0 1728 3 3 384 0 0 240 2 0
+fn=_IO_file_xsputn@@GLIBC_2.2.5
+0 8568 7 7 1666 1 0 707 2 0
+fn=_IO_flush_all_lockp
+0 88 8 8 25 8 4 12 0 0
+fn=_IO_setb
+0 21 2 2 5 0 0 5 0 0
+fn=_L_lock_12
+0 60 0 0 0 0 0 12 3 3
+fn=_L_unlock_24
+0 90 1 1 0 0 0 18 4 4
+fn=__GI_mempcpy
+0 2059 7 5 262 0 0 165 3 1
+fn=__GI_memset
+0 6208 12 9 288 5 3 2464 64 64
+fn=__GI_strlen
+0 429 10 4 61 8 6 0 0 0
+fn=__GI_strrchr
+0 71 3 3 5 1 0 0 0 0
+fn=____strtol_l_internal
+0 288 11 11 36 4 3 20 0 0
+fn=__acos_finite
+0 7 1 1 2 0 0 1 0 0
+fn=__asin_finite
+0 7 1 1 2 0 0 1 0 0
+fn=__atan2_finite
+0 10 1 1 2 0 0 1 0 0
+fn=__ctype_init
+0 1168 6 2 730 11 0 219 3 0
+fn=__cxa_atexit
+0 22 2 2 5 0 0 8 0 0
+fn=__cxa_finalize
+0 138 4 4 36 1 0 18 0 0
+fn=__deallocate_stack
+0 2520 4 3 792 0 0 792 15 0
+fn=__default_morecore
+0 16 1 1 2 0 0 2 0 0
+fn=__exp_finite
+0 10 2 2 2 0 0 1 0 0
+fn=__free_tcb
+0 864 1 1 288 9 0 72 0 0
+fn=__get_cpu_features
+0 60 0 0 24 0 0 0 0 0
+fn=__init_cpu_features
+0 140 17 17 10 1 1 22 0 0
+fn=__init_misc
+0 24 2 2 7 1 0 5 1 0
+fn=__libc_csu_init
+0 34 3 3 8 1 1 8 0 0
+fn=__libc_disable_asynccancel
+0 456 2 2 114 0 0 0 0 0
+fn=__libc_dl_error_tsd
+0 3 1 1 3 1 0 0 0 0
+fn=__libc_enable_asynccancel
+0 418 1 1 114 0 0 0 0 0
+fn=__libc_memalign
+0 980 4 4 164 0 0 162 1 1
+fn=__libc_pthread_init
+0 393 2 2 110 4 0 58 7 7
+fn=__libc_sigaction
+0 134 5 5 38 0 0 38 1 0
+fn=__libc_thread_freeres
+0 2016 2 2 504 1 0 432 0 0
+fn=__linkin_atfork
+0 9 2 2 4 2 0 1 0 0
+fn=__lll_lock_wait_private
+0 228 2 2 72 4 0 24 9 3
+fn=__lll_unlock_wake_private
+0 180 0 0 54 0 0 54 4 4
+fn=__log_finite
+0 10 1 1 2 0 0 1 0 0
+fn=__mpn_extract_double
+0 378 4 3 36 0 0 90 0 0
+fn=__mpn_lshift
+0 270 2 2 36 0 0 18 0 0
+fn=__mpn_mul_1
+0 2920 4 3 438 0 0 292 0 0
+fn=__new_exitfn
+0 39 5 5 11 4 2 5 0 0
+fn=__nptl_deallocate_tsd
+0 360 5 3 144 0 0 0 0 0
+fn=__overflow
+0 1308 2 2 654 0 0 0 0 0
+fn=__pow_finite
+0 7 1 1 2 0 0 1 0 0
+fn=__printf_fp
+0 14491 87 61 3167 7 1 2476 8 0
+fn=__pthread_disable_asynccancel
+0 864 3 2 216 0 0 0 0 0
+fn=__pthread_enable_asynccancel
+0 792 1 1 216 0 0 0 0 0
+fn=__pthread_initialize_minimal
+0 163 14 14 23 5 0 62 9 4
+fn=__register_atfork
+0 50 5 5 12 3 3 10 0 0
+fn=__rpc_thread_destroy
+0 792 2 2 360 0 0 144 0 0
+fn=__run_exit_handlers
+0 54 4 3 9 3 0 9 0 0
+fn=__sigjmp_save
+0 657 3 1 146 0 0 146 0 0
+fn=__sigsetjmp
+0 1547 6 4 332 8 0 648 3 3
+fn=__unregister_atfork
+0 57 2 2 21 2 0 3 0 0
+fn=__write_nocancel
+0 50 0 0 10 0 0 0 0 0
+fn=_dl_add_to_namespace_list
+0 198 2 2 49 0 0 34 0 0
+fn=_dl_add_to_slotinfo
+0 24 2 2 9 2 0 6 1 0
+fn=_dl_addr
+0 56005 11 11 13655 1017 816 16 2 0
+fn=_dl_allocate_tls
+0 168 2 2 32 0 0 48 0 0
+fn=_dl_allocate_tls_init
+0 5913 12 7 1825 4 0 949 0 0
+fn=_dl_allocate_tls_storage
+0 332 4 4 7 0 0 295 37 37
+fn=_dl_cache_libcmp
+0 1789 3 3 270 17 17 0 0 0
+fn=_dl_catch_error
+0 288 3 3 88 0 0 136 4 4
+fn=_dl_check_all_versions
+0 103 2 2 17 0 0 10 0 0
+fn=_dl_check_map_versions
+0 2463 14 14 787 18 14 316 23 23
+fn=_dl_count_modids
+0 4 2 2 3 0 0 0 0 0
+fn=_dl_debug_initialize
+0 57 3 3 19 2 1 4 0 0
+fn=_dl_debug_state
+0 2 0 0 2 0 0 0 0 0
+fn=_dl_determine_tlsoffset
+0 56 5 5 11 0 0 8 0 0
+fn=_dl_discover_osversion
+0 88 6 6 15 1 1 7 1 1
+fn=_dl_fini
+0 357 12 12 135 23 0 41 5 0
+fn=_dl_fixup
+0 3011 13 8 1136 110 19 387 2 2
+fn=_dl_get_tls_static_info
+0 5 0 0 3 0 0 2 1 1
+fn=_dl_important_hwcaps
+0 254 16 16 47 0 0 45 2 2
+fn=_dl_init
+0 308 10 10 100 13 0 27 0 0
+fn=_dl_init_paths
+0 411 18 18 49 0 0 42 4 4
+fn=_dl_initial_error_catch_tsd
+0 20 0 0 10 0 0 0 0 0
+fn=_dl_load_cache_lookup
+0 731 15 15 157 16 16 75 0 0
+fn=_dl_lookup_symbol_x
+0 29151 12 10 5868 130 97 3474 9 4
+fn=_dl_map_object
+0 1314 23 23 300 0 0 201 3 3
+fn=_dl_map_object_deps
+0 2117 32 32 435 2 1 183 1 1
+fn=_dl_map_object_from_fd
+0 3519 45 45 761 34 34 364 43 43
+fn=_dl_name_match_p
+0 7664 6 3 1984 10 0 1138 4 4
+fn=_dl_new_object
+0 963 13 13 175 6 6 175 36 36
+fn=_dl_next_ld_env_entry
+0 306 2 2 106 24 24 2 0 0
+fn=_dl_next_tls_modid
+0 6 1 1 3 0 0 1 0 0
+fn=_dl_receive_error
+0 28 3 3 10 0 0 12 0 0
+fn=_dl_relocate_object
+0 22518 50 50 6130 806 726 2606 270 255
+fn=_dl_runtime_resolve
+0 1073 3 3 333 0 0 296 4 2
+fn=_dl_setup_hash
+0 138 3 3 42 7 7 36 0 0
+fn=_dl_sort_fini
+0 428 6 6 110 4 0 31 0 0
+fn=_dl_start
+0 680 16 16 139 26 24 59 19 18
+fn=_dl_sysdep_read_whole_file
+0 41 3 3 6 0 0 9 1 1
+fn=_dl_sysdep_start
+0 414 12 11 113 17 16 29 5 5
+fn=_dl_sysdep_start_cleanup
+0 1 1 1 1 0 0 0 0 0
+fn=_dl_unload_cache
+0 10 2 1 3 2 0 2 0 0
+fn=_dl_vdso_vsym
+0 35 2 2 15 3 0 0 0 0
+fn=_fxstat
+0 60 4 4 6 0 0 0 0 0
+fn=_init
+0 60 6 6 14 3 0 18 2 1
+fn=_int_free
+0 67 5 5 18 0 0 7 0 0
+fn=_int_malloc
+0 1527 20 20 196 6 3 255 11 10
+fn=_itoa_word
+0 444 4 3 40 2 1 22 0 0
+fn=_pthread_cleanup_pop
+0 360 0 0 144 0 0 72 0 0
+fn=_pthread_cleanup_pop_restore
+0 176 2 1 66 0 0 22 0 0
+fn=_pthread_cleanup_push
+0 432 2 2 144 0 0 288 0 0
+fn=_pthread_cleanup_push_defer
+0 308 3 1 66 1 0 110 1 0
+fn=_setjmp
+0 146 1 1 0 0 0 0 0 0
+fn=_xstat
+0 49 1 1 4 0 0 3 0 0
+fn=access
+0 9 2 2 1 0 0 1 0 0
+fn=arena_thread_freeres
+0 432 2 2 216 16 0 72 0 0
+fn=bcmp
+0 1888 14 14 466 9 9 140 3 3
+fn=brk
+0 51 3 3 7 0 0 4 1 1
+fn=bsearch
+0 1804 6 6 328 0 0 236 0 0
+fn=calloc
+0 704 9 9 160 1 0 56 0 0
+fn=check_match.9346
+0 7416 11 6 3085 122 59 891 12 2
+fn=clone
+0 1944 3 3 288 4 0 216 14 8
+fn=close
+0 25 0 0 5 0 0 0 0 0
+fn=cos
+0 10 2 2 2 0 0 1 0 0
+fn=dl_main
+0 1261 78 78 257 29 19 149 17 16
+fn=do_clone.constprop.4
+0 2304 3 3 432 0 0 432 0 0
+fn=do_lookup_x
+0 52800 14 12 17493 350 194 7764 13 3
+fn=do_preload
+0 27 3 3 7 0 0 8 0 0
+fn=exit
+0 4 1 1 0 0 0 1 0 0
+fn=expand_dynamic_string_token
+0 33 2 2 6 0 0 9 1 1
+fn=fillin_rpath
+0 141 14 14 28 0 0 35 1 1
+fn=floor
+0 6 2 2 2 0 0 1 0 0
+fn=floorf
+0 6 1 1 2 0 0 1 0 0
+fn=free
+0 15164 3 3 6495 1 1 0 0 0
+fn=getenv
+0 304 3 3 103 32 0 7 0 0
+fn=getpagesize
+0 432 1 1 432 0 0 0 0 0
+fn=getrlimit
+0 5 1 1 1 0 0 0 0 0
+fn=gettimeofday
+0 30 2 1 2 0 0 10 0 0
+fn=hack_digit.13549
+0 3650 8 4 1168 0 0 584 0 0
+fn=handle_intel.isra.0
+0 188 9 9 28 0 0 52 0 0
+fn=index
+0 436 2 2 38 4 4 0 0 0
+fn=init_cacheinfo
+0 287 17 17 15 1 1 27 4 4
+fn=init_tls
+0 77 4 4 18 2 0 13 1 1
+fn=intel_02_known_compare
+0 648 2 2 324 12 12 0 0 0
+fn=intel_check_word
+0 814 21 21 56 0 0 80 0 0
+fn=isinf
+0 234 1 1 18 0 0 0 0 0
+fn=isnan
+0 126 1 1 18 0 0 0 0 0
+fn=madvise
+0 360 1 1 72 1 0 0 0 0
+fn=malloc
+0 223 4 4 42 4 0 11 0 0
+fn=malloc_consolidate
+0 666 4 4 9 0 0 263 33 32
+fn=malloc_hook_ini
+0 11 1 1 3 1 1 3 0 0
+fn=map_doit
+0 12 1 1 5 0 0 3 0 0
+fn=match_symbol
+0 1350 5 5 529 19 18 126 0 0
+fn=memcpy
+0 802 6 6 126 1 0 102 13 13
+fn=memcpy@GLIBC_2.2.5
+0 13 1 1 4 0 0 0 0 0
+fn=mempcpy
+0 2233 8 5 303 5 1 208 18 12
+fn=memset
+0 3425 25 16 182 13 6 1856 136 105
+fn=mmap
+0 138 4 3 23 0 0 0 0 0
+fn=mprotect
+0 90 2 2 18 0 0 0 0 0
+fn=munmap
+0 5 0 0 1 0 0 0 0 0
+fn=open
+0 79 1 1 11 0 0 6 0 0
+fn=open_path
+0 579 13 13 185 0 0 87 1 1
+fn=open_verify
+0 978 13 13 195 6 6 133 3 3
+fn=openaux
+0 119 2 2 56 0 0 21 0 0
+fn=printf
+0 606 3 3 66 1 0 364 0 0
+fn=pthread_create@@GLIBC_2.2.5
+0 42128 28 27 11376 291 1 5952 96 56
+fn=pthread_join
+0 4251 6 5 957 21 0 864 0 0
+fn=pthread_mutex_destroy
+0 10 1 1 3 0 0 1 0 0
+fn=pthread_mutex_init
+0 31 4 4 4 1 1 6 2 1
+fn=pthread_mutex_lock
+0 1680621 4 3 400147 11 0 80031 0 0
+fn=pthread_mutex_unlock
+0 1360507 6 3 400151 2 0 80029 0 0
+fn=ptmalloc_init.part.8
+0 347 6 6 114 37 0 15 4 2
+fn=puts
+0 260 8 6 106 6 0 32 0 0
+fn=rand
+0 1359856 2 1 339964 0 0 339964 0 0
+fn=random
+0 6419316 5 3 2359748 0 0 339964 0 0
+fn=random_r
+0 2745549264 2 2 845830432 0 0 422915216 0 0
+fn=read
+0 20 1 1 4 0 0 0 0 0
+fn=read_int
+0 24 2 2 10 0 0 2 0 0
+fn=res_thread_freeres
+0 1152 1 1 576 48 8 288 0 0
+fn=rint
+0 6 2 2 2 0 0 1 0 0
+fn=rintf
+0 6 1 1 2 0 0 1 0 0
+fn=rtld_lock_default_lock_recursive
+0 10 1 1 10 1 1 0 0 0
+fn=rtld_lock_default_unlock_recursive
+0 10 0 0 10 0 0 0 0 0
+fn=sbrk
+0 69 4 4 20 3 1 11 1 0
+fn=secure_getenv
+0 5 2 2 2 1 0 0 0 0
+fn=sin
+0 10 1 1 2 0 0 1 0 0
+fn=srand
+0 6419286 2 2 2019784 4 1 339964 1 0
+fn=srandom_r
+0 839711080 9 5 2719712 9 0 117627544 24 9
+fn=start_thread
+0 5256 6 6 1440 32 0 1080 56 16
+fn=strcasecmp
+0 7 2 2 3 1 1 1 0 0
+fn=strchrnul
+0 1604 3 3 146 7 6 0 0 0
+fn=strcmp
+0 26623 2 1 8281 110 48 0 0 0
+fn=strdup
+0 51 1 1 6 0 0 12 0 0
+fn=strerror_thread_freeres
+0 216 0 0 144 0 0 0 0 0
+fn=strlen
+0 1493 4 4 166 1 1 0 0 0
+fn=strncasecmp
+0 6 2 2 3 0 0 0 0 0
+fn=strnlen
+0 6 1 1 3 0 0 0 0 0
+fn=strsep
+0 1774 2 2 555 0 0 2 0 0
+fn=strtol
+0 8 1 1 4 0 0 0 0 0
+fn=sysmalloc
+0 140 14 14 33 5 2 23 3 2
+fn=time
+0 15 2 2 1 0 0 5 0 0
+fn=uname
+0 5 1 1 1 0 0 0 0 0
+fn=version_check_doit
+0 10 1 1 4 0 0 2 0 0
+fn=vfprintf
+0 9653 87 66 2650 35 10 2184 21 0
+fn=write
+0 96 1 1 48 0 0 0 0 0
+summary: 3618328690 1442 1280 860396375 3727 2261 545306098 1159 858
