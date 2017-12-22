@@ -10,29 +10,35 @@
  * Compile:  
  *    gcc -g -Wall -fopenmp -o omp_gauss_col omp_gauss_col.c 
  * Usage:
- *    ./omp_gauss_col <thread_count> <matrix/array dimensions>
- * Runtime schedule types:
- *    export OMP_SCHEDULE="static,1"
- *    export OMP_SCHEDULE="dynamic,1"
- *    export OMP_SCHEDULE="guided,1"
+ *    ./omp_gauss_col <thread_count> <matrix dimensions> [<measure>]
+ *    Eg.1: ./omp_gauss_col 4 10
+ *    Eg.2: ./omp_gauss_col 4 10000 measure
+ *
+ * Note: measure flag shall be turned on when we want to measure performance different 
+ * between different loop schedule scheme.
+ * When measure flag is turned on. The programe shall loop through all schedule scheme
+ * and pre-define chunk_sizes and thread_count
  */
-
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <omp.h>
-
+#include <string.h>
 
 /* Serial functions */
-void Get_args(int argc, char* argv[], int* thread_count_p, int* n_p);
+void Get_args(int argc, char* argv[], int* thread_count_p, int* n_p, char* exec_mode);
 void Usage(char* prog_name);
 void Gen_matrix(double A[], int n);
 void Gen_vector(double x[], int n);
 void Print_matrix(char* title, double y[], int n);
 void Print_vector(char* title, double y[], double n);
+void Scheduling_Analysis(double A[], double B[], double X[], int n);
 
 /* Parallel functions */
-void Gauss_col (double A[], double B[], double X[], int n, int thread_count);
+void Gauss_Uppertriangular (double A[], double B[], double X[], int n, int thread_count);
+void Gauss_Col_BackwardSubstitution (double A[], double B[], double X[], int n, int thread_count) ;
+
+#define NUM_ELEMS(x)  (sizeof(x) / sizeof((x)[0]))
 
 
 int main(int argc, char* argv[]) 
@@ -43,8 +49,10 @@ int main(int argc, char* argv[])
     int n;
     int thread_count;
     double start, finish;
-
-    Get_args(argc, argv, &thread_count, &n);
+    char* exec_mode;
+    
+    exec_mode = malloc(20*sizeof(char));
+    Get_args(argc, argv, &thread_count, &n, exec_mode);
 
     A = malloc(n*n*sizeof(double));
     B = malloc(n*sizeof(double));
@@ -52,29 +60,53 @@ int main(int argc, char* argv[])
 
     Gen_matrix(A, n);
     Gen_vector(B, n);
-    printf("\n\n");
-    Print_matrix("The matrix 'A' is:", A, n);
-    printf("\n\n");
-    Print_vector("The vector 'B' is:", B, n);
+    
+    /* Only call Analysis sub routine if measure is turned on */
+    if (strcmp(exec_mode,"measure") == 0) {
+        Scheduling_Analysis(A, B, X, n);
+        printf("\n");
+        return 0;
+    }
+    
+    if (n <=10) {
+        printf("\n\n");
+        Print_matrix("The matrix 'A' is:", A, n);
+        printf("\n\n");
+        Print_vector("The vector 'B' is:", B, n);
+    } else {
+        printf("Matrix size is too big...! \n");
+        printf("Printing of Matrix is skipped. Only Matrix with size < 10 will get printed! \n");
+    }
 
-
+    /* Start normal calculation */
     start = omp_get_wtime();
-    Gauss_col(A, B, X, n, thread_count);    
+    Gauss_Uppertriangular(A, B, X, n, thread_count);    
+    Gauss_Col_BackwardSubstitution(A, B, X, n, thread_count);    
     finish = omp_get_wtime();
 
-    printf("\n\n");
-    Print_vector("The solution is:", X, n);
+    if (n <=10) {
+        printf("\n\n");
+        Print_vector("The solution is:", X, n);
+    } else {
+        printf("Matrix got solved successfully...! \n");
+        printf("Printing result is skipped. Only Matrix with size < 10 will get printed! \n");
+    }
     printf("\n\nElapsed time = %e seconds\n\n", finish - start);
 
     return 0;
 
 }  /* main */
 
-void Get_args(int argc, char* argv[], int* thread_count_p, int* n_p) {
+void Get_args(int argc, char* argv[], int* thread_count_p, int* n_p, char* exec_mode) {
 
-   if (argc != 5) Usage(argv[0]);
+   //if (argc != 5) Usage(argv[0]);
    *thread_count_p = strtol(argv[1], NULL, 10);
    *n_p = strtol(argv[2], NULL, 10);
+   
+   if (argc == 4) {
+       strcpy(exec_mode, argv[3]);
+       printf("Get_args: exec_mode: %s, argv[3]: %s\n", exec_mode, argv[3]);
+   }
    if (*thread_count_p <= 0 || *n_p <= 0) Usage(argv[0]);
 
 }  /* Get_args */
@@ -132,7 +164,8 @@ void Print_vector(char* title, double y[], double n) {
 
 }  /* Print_vector */
 
-void Gauss_col (double A[], double B[], double X[], int n, int thread_count) {
+/* Gaussian elimination which transforms the matrix 'A' into an 'upper triangular' form */
+void Gauss_Uppertriangular (double A[], double B[], double X[], int n, int thread_count) {
     
     int row, col;
     float multiplier;
@@ -152,8 +185,13 @@ void Gauss_col (double A[], double B[], double X[], int n, int thread_count) {
 
     printf("\n\n");
     Print_matrix("After gaussian elimination:", A, n);
+}
 
-// Backward substitution using 'column oriented' algorithm
+/* Backward substitution using 'column oriented' algorithm */
+void Gauss_Col_BackwardSubstitution (double A[], double B[], double X[], int n, int thread_count) {
+    
+    int row, col;
+        
     for(row=0; row<n; row++){
         X[row] = B[row];
     }    
@@ -167,4 +205,68 @@ void Gauss_col (double A[], double B[], double X[], int n, int thread_count) {
         }
     }
 
-}  /* Gauss */
+}  /* Gauss_Col_BackwardSubstitution */
+
+/* Sub routine used to measure performance different loop scheduling in OpenMP 
+Sub routine only targets to backward substitution as requirement of 
+Exercises 5.4.e (Backward Substitution) in Pacheco's book.*/
+void Scheduling_Analysis(double A[], double B[], double X[], int n) {
+
+    int chunk_sizes[] = {0, 2, 4, 8, 16, 32, 61, 128};
+    int scheduling_types[] = {omp_sched_static, omp_sched_dynamic, omp_sched_guided, omp_sched_auto };
+    int threads[] = {1, 2, 5, 10, 20};
+    int i, j, k;
+    double start, finish;
+    
+    for(i=0;i<NUM_ELEMS(scheduling_types);i++) {
+        
+        /* The scheduling kinds that are available are defined in omp.h as this enum below
+            typedef enum omp_sched_t {
+                omp_sched_static = 1,
+                omp_sched_dynamic = 2,
+                omp_sched_guided = 3,
+                omp_sched_auto = 4
+            } omp_sched_t;
+        */
+        switch(scheduling_types[i]) {
+            case 1:
+                printf("\n\nSchedule Type: Static");
+                printf("\nChunk Size: 0 means chunk size shall be set to default by OpenMP");
+                break;
+            case 2:
+                printf("\n\nSchedule Type: Dynamic");
+                printf("\nChunk Size: 0 means chunk size shall be set to default by OpenMP");
+                break;
+            case 3:
+                printf("\n\nSchedule Type: Guided");
+                printf("\nChunk Size: 0 means chunk size shall be set to default by OpenMP");
+                break;
+            case 4:
+                printf("\n\nSchedule Type: Auto");
+                printf("\nChunk Size is ignored in omp_sched_auto ");
+                break;
+            default:            
+                printf("\n\nUnknown Schedule Type...");
+                return;
+        }
+        
+        printf("\nChunk Size:\t\t");
+        for(k=0;k<NUM_ELEMS(chunk_sizes);k++) {
+            printf("\t   %d", chunk_sizes[k]);
+        }
+        for(j=0;j<NUM_ELEMS(threads);j++) {
+            printf("\nWith %d threads |\t", threads[j]);
+            //printf("At chunk: \t\t ExecTime:  seconds\n");
+            for(k=0;k<NUM_ELEMS(chunk_sizes);k++) {
+                omp_set_schedule(scheduling_types[i], chunk_sizes[k]);
+                start = omp_get_wtime();      
+                Gauss_Col_BackwardSubstitution(A, B, X, n, threads[j]);    
+                finish = omp_get_wtime();
+                printf("\t : %4.2f" , finish - start);
+            }
+        }
+    }
+
+}  /* Scheduling_Analysis */
+
+

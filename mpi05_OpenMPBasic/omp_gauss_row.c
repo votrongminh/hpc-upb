@@ -10,11 +10,14 @@
  * Compile:  
  *    gcc -g -Wall -fopenmp -o omp_gauss_row omp_gauss_row.c 
  * Usage:
- *    ./omp_gauss_row <thread_count> <matrix/array dimensions>
- * Runtime schedule types:
- *    export OMP_SCHEDULE="static,1"
- *    export OMP_SCHEDULE="dynamic,1"
- *    export OMP_SCHEDULE="guided,1"
+ *    ./omp_gauss_row <thread_count> <matrix dimensions> [<measure>]
+ *    Eg.1: ./omp_gauss_row 4 10
+ *    Eg.2: ./omp_gauss_row 4 10000 measure
+ *
+ * Note: measure flag shall be turned on when we want to measure performance different 
+ * between different loop schedule scheme.
+ * When measure flag is turned on. The programe shall loop through all schedule scheme
+ * and pre-define chunk_sizes and thread_count
  */
 
 
@@ -50,25 +53,23 @@ int main(int argc, char* argv[])
     char* exec_mode;
     
     exec_mode = malloc(20*sizeof(char));
-	
     Get_args(argc, argv, &thread_count, &n, exec_mode);
-
+        
     A = malloc(n*n*sizeof(double));
     B = malloc(n*sizeof(double));
     X = malloc(n*sizeof(double));
+    
 
     Gen_matrix(A, n);
     Gen_vector(B, n);
-	
-	
-	/* Only call Analysis sub routine if measure is turned on */
+    
+    /* Only call Analysis sub routine if measure is turned on */
     if (strcmp(exec_mode,"measure") == 0) {
         Scheduling_Analysis(A, B, X, n);
         printf("\n");
         return 0;
     }
-	
-	
+    
     if (n <=10) {
         printf("\n\n");
         Print_matrix("The matrix 'A' is:", A, n);
@@ -79,7 +80,7 @@ int main(int argc, char* argv[])
         printf("Printing of Matrix is skipped. Only Matrix with size < 10 will get printed! \n");
     }
 
-
+    /* Start normal calculation */
     start = omp_get_wtime();
     Gauss_Uppertriangular(A, B, X, n, thread_count);    
     Gauss_Row_BackwardSubstitution(A, B, X, n, thread_count);    
@@ -147,7 +148,7 @@ void Print_matrix(char* title, double y[], int n) {
    printf("%s\n", title);
    for (i = 0; i < n; i++){
         for (j = 0; j < n; j++){
-            printf("%10.3f ", y[i*n+j]);
+            printf("%10.1f ", y[i*n+j]);
         }
         printf("\n");   
    }
@@ -160,24 +161,26 @@ void Print_vector(char* title, double y[], double n) {
 
    printf("%s\n", title);
    for (i = 0; i < n; i++)
-      printf("%10.3f ", y[i]);
+      printf("%10.1f ", y[i]);
    printf("\n");
 
 }  /* Print_vector */
 
+
+/* Gaussian elimination which transforms the matrix 'A' into an 'upper triangular' form */
 void Gauss_Uppertriangular (double A[], double B[], double X[], int n, int thread_count) {
     
     int row, col;
     float multiplier;
     int norm;
-	
-// Gaussian elimination which transforms the matrix 'A' into an 'upper triangular' form
+    
+
     for (norm = 0; norm < n - 1; norm++) {
 #       pragma omp parallel for num_threads(thread_count) shared(A, B) private(multiplier,row,col)
         for (row = norm + 1; row < n; row++) {
             multiplier = A[row*n+norm] / A[norm*n+norm];
             for (col = norm; col < n; col++) {
-	            A[row*n+col] -= A[norm*n+col] * multiplier;
+                A[row*n+col] -= A[norm*n+col] * multiplier;
             }
             B[row] -= B[norm] * multiplier;
         }
@@ -185,12 +188,14 @@ void Gauss_Uppertriangular (double A[], double B[], double X[], int n, int threa
 
     printf("\n\n");
     Print_matrix("After gaussian elimination:", A, n);
-}
+} /* Gauss_Uppertriangular */
 
+
+/* Implement Backward Substitution of Gaussian Elimination algorithm with row oriented*/
 void Gauss_Row_BackwardSubstitution (double A[], double B[], double X[], int n, int thread_count) {
-	int row, col;
-	double tmp_x;
-	
+    int row, col;
+    double tmp_x;
+    
 // Backward substitution using 'column oriented' algorithm
     for (row = n-1; row >= 0; row--) {
         tmp_x = B[row];
@@ -202,8 +207,9 @@ void Gauss_Row_BackwardSubstitution (double A[], double B[], double X[], int n, 
         }
         X[row] = tmp_x;
         X[row] /= A[row*n+row];
-	} 
+    } 
 } /* Gauss_Row_BackwardSubstitution */
+
 
 /* Sub routine used to measure performance different loop scheduling in OpenMP 
 Sub routine only targets to backward substitution as requirement of 
@@ -217,15 +223,15 @@ void Scheduling_Analysis(double A[], double B[], double X[], int n) {
     double start, finish;
     
     for(i=0;i<NUM_ELEMS(scheduling_types);i++) {
-		
-		/* The scheduling kinds that are available are defined in omp.h as this enum below
-			typedef enum omp_sched_t {
-				omp_sched_static = 1,
-				omp_sched_dynamic = 2,
-				omp_sched_guided = 3,
-				omp_sched_auto = 4
-			} omp_sched_t;
-		*/
+        
+        /* The scheduling kinds that are available are defined in omp.h as this enum below
+            typedef enum omp_sched_t {
+                omp_sched_static = 1,
+                omp_sched_dynamic = 2,
+                omp_sched_guided = 3,
+                omp_sched_auto = 4
+            } omp_sched_t;
+        */
         switch(scheduling_types[i]) {
             case 1:
                 printf("\n\nSchedule Type: Static");

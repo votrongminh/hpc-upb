@@ -32,6 +32,17 @@ Answer: The inner loop of the column-oriented algorithm can be parallelized.
 Reason: There is no dependancy in calculation of x[row] in every loop of row
 e.)
 
+f.) Modify your parallel loop with a schedule(runtime) clause and test the
+program with various schedules. If your upper triangular system has 10,000
+variables, which schedule gives the best performance?
+Answer: The performance of upper triangular system is dependant on number of calculation variable, thread counts, scheduling typesand chunk size of scheduling algorithm
+The detail of performance variation can be seen when "measure" flag is turned on Eg./omp_gauss_col 4 10000 measure
+We can see dynamic scheduling alway carry overhead calculation when chunk size is small compare to static and guided.
+When chunk increase dynamic schedule gain the efficiency but still not that good compare to static one
+At execution with 10 threads, execution time is considered minimum and allign with auto scheduling which showed to be best in most of the combination
+So in order to tailor to best performance, we should aware of input factors and optimize with static scheme else leave to default compiler
+
+
 ### Gaussian Elimination ###
 
 Tasks see Exercise 5.5 in Pacheco.
