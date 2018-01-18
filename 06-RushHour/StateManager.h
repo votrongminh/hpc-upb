@@ -2,7 +2,8 @@
 
 #include "State.h"
 #include <unordered_set>
-
+#include <mutex>
+#include <shared_mutex>
 
 
 
@@ -67,5 +68,7 @@ class StateManager{
 
 
 		std::unordered_set<State,StateHash,StateEqual> state_set;
+		mutable std::shared_timed_mutex bestSolMutex;
+		mutable std::shared_timed_mutex claimMutex;
 
 };

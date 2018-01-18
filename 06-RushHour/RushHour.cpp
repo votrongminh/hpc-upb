@@ -1,3 +1,11 @@
+/* 
+module add gcc/6.1.0
+g++ -g -Wall -fopenmp -o RushHour Car.cpp State.cpp StateManager.cpp RushHour.cpp
+ccsalloc -I --res=rset=ncpus=16,place=:excl
+./RushHour
+export OMP_NUM_THREADS=16
+
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <omp.h>
@@ -53,9 +61,10 @@ void Check(State state, StateManager* manager){
 				if(state_next.solutionSize() < manager->bestSolutionSize()) {
 					//Only call recursive if current solution size is small
 					if (manager->claim(state_next)) {
-					    #pragma omp task
+					    #pragma omp task default(none) shared(manager) firstprivate(state_next)
+					    // #pragma omp task
 						Check(state_next, manager);
-						#pragma omp taskwait
+						// #pragma omp taskwait
 					}
 				} else {
 					return;
@@ -102,10 +111,10 @@ int main(int argc, char * argv[])
 											  length: how long is this car?
 		The first car is the one that needs to reach the side of the playing field stated above, which is only possible if it has the proper orientation!
 	*/
-	vector<Car> cars_ = {Car(0,4,0,2),Car(2,4,1,3),Car(3,2,1,3),Car(0,2,0,2),Car(2,1,0,2), Car(5,3,0,2),Car(6,4,1,2),}; 
+	vector<Car> cars_ = {Car(0,4,0,2),Car(2,4,1,3),Car(3,2,1,3),Car(0,2,0,2),Car(2,1,0,2), Car(5,3,0,2),Car(6,4,1,2)}; 
 	// vector<Car> cars_ = {Car(0,4,0,2),Car(2,4,1,3),Car(3,2,1,3),Car(0,2,0,2),Car(2,1,0,2), Car(5,3,0,2),Car(6,4,1,2),Car(6,6,0,2),Car(5,6,1,2)}; 
 	// vector<Car> cars_ = {Car(0,4,0,2),Car(2,4,1,3),Car(3,2,1,3)}; 
-	/* vector<Car> cars_ = {Car(0,4,0,3),Car(2,4,1,3),Car(3,2,1,3),Car(0,2,0,2),Car(2,1,0,2)}; */
+	 // vector<Car> cars_ = {Car(0,4,0,3),Car(2,4,1,3),Car(3,2,1,3),Car(0,2,0,2),Car(2,1,0,2)};
 	// vector<Car> cars_ = {Car(4,4,0,2),Car(0,2,0,2),Car(2,1,0,2)};
 
 /*
@@ -119,11 +128,11 @@ int main(int argc, char * argv[])
 */
 	omp_set_num_threads(16);
 	GET_TIME(start);
-	#pragma omp parallel
-    // Only the first thread will spawn other threads
-    #pragma omp single nowait
+	State firststate = State(cars_);
+	#pragma omp parallel default(none) shared(state_manager, firststate)
+	#pragma omp single
 	{
-	Check(State(cars_), state_manager);
+	Check(firststate, state_manager);
 	}
 	GET_TIME(finish);
 	state_manager->printBestSolution();

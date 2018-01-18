@@ -1,6 +1,8 @@
 /*   
 	gcc -g -Wall -fopenmp -o sumArray sumArray.c
 	./sumArray
+	export OMP_NUM_THREADS=1
+
 */
 #include <stdio.h>
 #include <stdlib.h>
