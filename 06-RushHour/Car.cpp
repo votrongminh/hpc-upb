@@ -55,10 +55,10 @@ bool Car::checkWon(int cond,int szx, int szy) const{
 			if(x == 0) return true;
 			break;
 		case 1:
-			if(y + len == szy - 1) return true;
+			if(y + len -1 == szy - 1) return true;
 			break;
 		case 2:
-			if(x + len == szx - 1) return true;			
+			if(x + len -1 == szx - 1) return true;			
 			break;
 		case 3:
 			if(y==0) return true;

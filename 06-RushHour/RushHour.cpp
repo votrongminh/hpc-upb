@@ -8,9 +8,16 @@
 
 #include "StateManager.h"
 #include "Car.h"
+#include <sys/time.h>
+#include <time.h>
 
 using namespace std;
 
+#define GET_TIME(now) { \
+   struct timeval t; \
+   gettimeofday(&t, NULL); \
+   now = t.tv_sec + t.tv_usec/1000000.0; \
+}
 
 /*
 	state is the arrangement we want to check,
@@ -29,7 +36,41 @@ void Check(State state, StateManager* manager){
 		 (state.move_car(...) returns such a followup state from a given car number and direction)
 		-Check whether the followup states created are legal states. If so recursively call Check(...) on them.
 */
-
+	int i, dir;
+	State state_next;
+	for (i=0; i< state.carCount(); i++) {
+		for(dir=0;dir<2;dir++) {
+			if(dir == 0)  {
+				state_next = state.move_car(i, false);
+			}else {
+				state_next = state.move_car(i, true);
+			}
+			
+			//if next state is valid, continue to move
+			if(state_next.legal(manager) ) {
+				// if(dir == 0)  { printf("Car %d, move backward is valid\n", i);
+				// } else { printf("Car %d, move forward is valid\n", i); }
+				if(state_next.solutionSize() < manager->bestSolutionSize()) {
+					//Only call recursive if current solution size is small
+					if (manager->claim(state_next)) {
+					    #pragma omp task
+						Check(state_next, manager);
+						#pragma omp taskwait
+					}
+				} else {
+					return;
+				}
+			}
+			
+			if(state_next.won(manager) ) {
+				// printf("Next State reached the end goal!\n");
+				manager -> enterSolution(state_next);
+				// printf("Solution entered\n");
+				return;
+			}
+		}
+	}
+	// #pragma omp taskwait
 	return;
 }
 
@@ -40,6 +81,7 @@ void Check(State state, StateManager* manager){
 
 int main(int argc, char * argv[])
 {
+	double start, finish;
 /*
 	Task 0
 	------
@@ -48,6 +90,7 @@ int main(int argc, char * argv[])
 */
 
 	/*state_manager holds global information about the state of the solver */
+	// Playfield pf(8,8,Playfield::GoalType::Right); //sizeX(8),sizeY(8),goal(2)
 	Playfield pf(8,8,Playfield::GoalType::Right); //sizeX(8),sizeY(8),goal(2)
 	StateManager * state_manager = new StateManager(pf);
 
@@ -59,7 +102,11 @@ int main(int argc, char * argv[])
 											  length: how long is this car?
 		The first car is the one that needs to reach the side of the playing field stated above, which is only possible if it has the proper orientation!
 	*/
-	vector<Car> cars_ = {Car(0,4,0,2),Car(2,4,1,3),Car(3,2,1,3),Car(0,2,0,2),Car(2,1,0,2)};
+	vector<Car> cars_ = {Car(0,4,0,2),Car(2,4,1,3),Car(3,2,1,3),Car(0,2,0,2),Car(2,1,0,2), Car(5,3,0,2),Car(6,4,1,2),}; 
+	// vector<Car> cars_ = {Car(0,4,0,2),Car(2,4,1,3),Car(3,2,1,3),Car(0,2,0,2),Car(2,1,0,2), Car(5,3,0,2),Car(6,4,1,2),Car(6,6,0,2),Car(5,6,1,2)}; 
+	// vector<Car> cars_ = {Car(0,4,0,2),Car(2,4,1,3),Car(3,2,1,3)}; 
+	/* vector<Car> cars_ = {Car(0,4,0,3),Car(2,4,1,3),Car(3,2,1,3),Car(0,2,0,2),Car(2,1,0,2)}; */
+	// vector<Car> cars_ = {Car(4,4,0,2),Car(0,2,0,2),Car(2,1,0,2)};
 
 /*
 	Task 2
@@ -70,11 +117,18 @@ int main(int argc, char * argv[])
 	-In Check() spawn more tasks for the recursion in a reasonable way.
 	Use the "default(none)" tag and explicitly state what a task can access and how it is accessed
 */
-
+	omp_set_num_threads(16);
+	GET_TIME(start);
+	#pragma omp parallel
+    // Only the first thread will spawn other threads
+    #pragma omp single nowait
+	{
 	Check(State(cars_), state_manager);
-
+	}
+	GET_TIME(finish);
 	state_manager->printBestSolution();
-
+	
+	printf("\nExecution of Check() take: %e seconds\n", finish - start);
 	delete state_manager;
 	return 0;
 
