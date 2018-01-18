@@ -1,9 +1,12 @@
 /* 
+
+ccsalloc -I --res=rset=ncpus=16,place=:excl
+cd GitHub/hpc-upb/06-RushHour
 module add gcc/6.1.0
 g++ -g -Wall -fopenmp -o RushHour Car.cpp State.cpp StateManager.cpp RushHour.cpp
-ccsalloc -I --res=rset=ncpus=16,place=:excl
-./RushHour
 export OMP_NUM_THREADS=16
+./RushHour
+
 
  */
 #include <stdio.h>
@@ -45,48 +48,41 @@ void Check(State state, StateManager* manager){
 		-Check whether the followup states created are legal states. If so recursively call Check(...) on them.
 */
 	int i, dir;
-	State state_next;
-	for (i=0; i< state.carCount(); i++) {
-		for(dir=0;dir<2;dir++) {
-			if(dir == 0)  {
-				state_next = state.move_car(i, false);
-			}else {
-				state_next = state.move_car(i, true);
-			}
+	State state_fw, state_bw;
+	
+	if(state.won(manager) ) {
+		manager -> enterSolution(state);
+		return;
+	}
 			
-			//if next state is valid, continue to move
-			if(state_next.legal(manager) ) {
-				// if(dir == 0)  { printf("Car %d, move backward is valid\n", i);
-				// } else { printf("Car %d, move forward is valid\n", i); }
-				if(state_next.solutionSize() < manager->bestSolutionSize()) {
-					//Only call recursive if current solution size is small
-					if (manager->claim(state_next)) {
-					    #pragma omp task default(none) shared(manager) firstprivate(state_next)
-					    // #pragma omp task
-						Check(state_next, manager);
-						// #pragma omp taskwait
-					}
-				} else {
-					return;
+	for (i=0; i< state.carCount(); i++) {					
+		state_bw = state.move_car(i, false);		
+		state_fw = state.move_car(i, true);
+				
+		//if next state is valid, continue to move
+		if(state_bw.legal(manager) ) {
+			if(state_bw.solutionSize() < manager->bestSolutionSize()) {
+				//Only call recursive if current solution size is small
+				if (manager->claim(state_bw)) {
+					#pragma omp task default(none) shared(manager) firstprivate(state_bw)
+					Check(state_bw, manager);
 				}
 			}
-			
-			if(state_next.won(manager) ) {
-				// printf("Next State reached the end goal!\n");
-				manager -> enterSolution(state_next);
-				// printf("Solution entered\n");
-				return;
-			}
 		}
+		//if next state is valid, continue to move
+		if(state_fw.legal(manager) ) {
+			if(state_fw.solutionSize() < manager->bestSolutionSize()) {
+				//Only call recursive if current solution size is small
+				if (manager->claim(state_fw)) {
+					#pragma omp task default(none) shared(manager) firstprivate(state_fw)
+					Check(state_fw, manager);
+				}
+			}
+		}	
 	}
-	// #pragma omp taskwait
+
 	return;
 }
-
-
-
-
-
 
 int main(int argc, char * argv[])
 {
@@ -99,7 +95,6 @@ int main(int argc, char * argv[])
 */
 
 	/*state_manager holds global information about the state of the solver */
-	// Playfield pf(8,8,Playfield::GoalType::Right); //sizeX(8),sizeY(8),goal(2)
 	Playfield pf(8,8,Playfield::GoalType::Right); //sizeX(8),sizeY(8),goal(2)
 	StateManager * state_manager = new StateManager(pf);
 
@@ -126,14 +121,13 @@ int main(int argc, char * argv[])
 	-In Check() spawn more tasks for the recursion in a reasonable way.
 	Use the "default(none)" tag and explicitly state what a task can access and how it is accessed
 */
-	omp_set_num_threads(16);
 	GET_TIME(start);
-	State firststate = State(cars_);
-	#pragma omp parallel default(none) shared(state_manager, firststate)
-	#pragma omp single
-	{
-	Check(firststate, state_manager);
-	}
+		State firststate = State(cars_);
+		#pragma omp parallel default(none) shared(state_manager, firststate)
+		#pragma omp single
+		{
+			Check(firststate, state_manager);
+		}
 	GET_TIME(finish);
 	state_manager->printBestSolution();
 	
