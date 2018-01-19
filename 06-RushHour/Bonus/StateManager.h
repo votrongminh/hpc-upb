@@ -6,8 +6,6 @@
 #include <shared_mutex>
 
 
-
-
 struct Playfield{
 	enum GoalType{Left = 0, Top = 1, Right = 2, Bot = 3};
 
@@ -43,15 +41,8 @@ class StateManager{
 		StateManager(Playfield p)
 			:playfield(p),best_solution_size(10000),best_solution()//,max_claim(0)
 		{
-			omp_init_lock(&bestSolMutex);
-			omp_init_lock(&claimMutex);
-		}
 		
-		~StateManager()
-		{
-			omp_destroy_lock(&bestSolMutex);
-			omp_destroy_lock(&claimMutex);
- 		}
+		}
 
 		//Size of the best solution found so far
 		int bestSolutionSize() const{ return best_solution_size;};
@@ -75,7 +66,7 @@ class StateManager{
 
 		std::unordered_set<State,StateHash,StateEqual> state_set;
 		
-		omp_lock_t  bestSolMutex;
-		omp_lock_t  claimMutex;
+		std::shared_timed_mutex bestSolMutex;
+		std::shared_timed_mutex claimMutex;
 		
 };

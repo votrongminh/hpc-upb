@@ -1,7 +1,7 @@
 /* 
 
 ccsalloc -I --res=rset=ncpus=16,place=:excl
-cd GitHub/hpc-upb/06-RushHour
+cd GitHub/hpc-upb/06-RushHour/Bonus/
 module add gcc/6.1.0
 g++ -g -Wall -fopenmp -o RushHour Car.cpp State.cpp StateManager.cpp RushHour.cpp
 export OMP_NUM_THREADS=16
